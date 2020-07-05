@@ -1,16 +1,34 @@
 import RPi.GPIO as GPIO
 from time import sleep
 from rover import Rover
+from utils.keyboard import getch
 
+# right motor
 in1 = 11
 in2 = 13
+en1 = 15
+
+# left motor
 in3 = 16
 in4 = 18
+en2 = 22
 
 GPIO.setmode(GPIO.BOARD)
-rover = Rover(in1, in2, in3, in4)
-rover.backward(0.5)
-rover.forward(0.5)
-rover.left(0.5)
-rover.right(0.5)
-rover.cleanup()
+rover = Rover(in1, in2, en1, in3, in4, en2)
+
+while True:
+    key = getch()
+    if key == "w":
+        rover.forward()
+    if key == "s":
+        rover.backward()
+    if key == "a":
+        rover.left()
+    if key == "d":
+        rover.right()
+    if key == "e":
+        rover.cleanup()
+
+    sleep(0.1)
+    rover.motors_low()
+    key = ""
