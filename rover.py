@@ -19,9 +19,9 @@ class Rover():
         self.motors_low()
 
         self.motor_right = GPIO.PWM(en1, 1000)
-        self.motor_right.start(75)
+        self.motor_right.start(99)
         self.motor_left = GPIO.PWM(en2, 1000)
-        self.motor_left.start(75)
+        self.motor_left.start(99)
     
     def motors_low(self):
         GPIO.output(self.in1, GPIO.LOW)
