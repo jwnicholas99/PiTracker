@@ -3,6 +3,7 @@ from time import sleep
 from rover import Rover
 from utils.keyboard import getch
 from utils.stream import start_stream, end_stream
+from utils.tracking import start_manager
 
 # right motor
 in1 = 13
@@ -17,7 +18,8 @@ en2 = 22
 GPIO.setmode(GPIO.BOARD)
 rover = Rover(in1, in2, en1, in3, in4, en2)
 
-proc = start_stream("../mjpg-streamer/mjpg-streamer-experimental/")
+#proc = start_stream("../mjpg-streamer/mjpg-streamer-experimental/")
+start_manager(rover)
 while True:
     key = getch()
     if key == "w":
