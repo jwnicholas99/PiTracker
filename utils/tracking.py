@@ -2,7 +2,7 @@ from multiprocessing import Manager
 from multiprocessing import Process
 from imutils.video import VideoStream
 from utils.pid import PID
-from utils.objcenter import ObjCenter
+from utils.obj_detector import ObjDetector
 import signal
 import time
 import sys
@@ -21,33 +21,14 @@ def obj_center(args, objX, objY, centerX, centerY):
     # signal trap to handle keyboard interrupt
     signal.signal(signal.SIGINT, signal_handler)
 
-    # start video stream and let camera warm up
-    vs = VideoStream(usePiCamera=True).start()
-    time.sleep(2.0)
+    obj_detector = ObjDetector(model_dir="Sample_TFLite_model",
+                               graph="detect.tflite",
+                               labelmap="labelmap.txt",
+                               threshold=0.5,
+                               resolution="640x640",
+                               obj_idxs=[0])
 
-    # init object center finder
-    obj = ObjCenter(args["cascade"])
-
-    while True:
-        frame = vs.read()
-        frame = cv2.flip(frame, 0)
-
-        # calculate frame center
-        H, W = frame.shape[:2]
-        centerX.value = W // 2
-        centerY.value = H // 2
-
-        # find object's location
-        object_loc = obj.find_center(frame, (centerX.value, centerY.value))
-        (objX.value, objY.value), rect = object_loc
-
-        # extract and draw bounding box
-        if rect is not None:
-            x, y, w, h = rect
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-
-        cv2.imshow("Pan-Tilt Tracking", frame)
-        cv2.waitKey(1)
+    obj_detector.start(objX, objY)
 
 def pid_process(output, p, i, d, objCoord, centerCoord):
     # signal trap to handle keyboard interrupt
@@ -67,7 +48,6 @@ def set_wheels(rover, period):
 
     while True:
         # set wheels
-        print(period)
         is_left = period.value > 0
         # Take note that if I'm to the left on the feed, it's to the rover's right
         if period.value == 0:
