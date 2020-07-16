@@ -114,6 +114,9 @@ class ObjDetector:
             classes = self.interpreter.get_tensor(output_details[1]['index'])[0]
             scores = self.interpreter.get_tensor(output_details[2]['index'])[0]
 
+            objX.value = int(self.img_width // 2)
+            objY.value = int(self.img_height // 2)
+
             # loop over all detection and draw boxes if fulfill:
             #   1. Score is above minimum threshold
             #   2. Class is one of the specified obj_idx

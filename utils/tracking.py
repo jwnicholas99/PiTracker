@@ -7,8 +7,10 @@ import signal
 import time
 import sys
 import cv2
+import pigpio
 
-servoRange = (-90, 90)
+# pulse width range for SG90 servos
+servoRange = (500, 2500)
 
 def signal_handler(sig, frame):
     print("You pressed ctrl-c! Exiting...")
@@ -24,10 +26,11 @@ def obj_center(args, objX, objY, centerX, centerY):
     obj_detector = ObjDetector(model_dir="Sample_TFLite_model",
                                graph="detect.tflite",
                                labelmap="labelmap.txt",
-                               threshold=0.5,
+                               threshold=0.45,
                                resolution="640x640",
                                obj_idxs=[0])
-
+    centerX.value = obj_detector.img_width // 2
+    centerY.value = obj_detector.img_height // 2
     obj_detector.start(objX, objY)
 
 def pid_process(output, p, i, d, objCoord, centerCoord):
@@ -42,22 +45,25 @@ def pid_process(output, p, i, d, objCoord, centerCoord):
         error = centerCoord.value - objCoord.value
         output.value = p.update(error)
 
-def set_wheels(rover, period):
+def in_range(val, start, end):
+    return val >= start and val <= end
+
+def set_servos(rover, pan_delta, tilt_delta):
     # signal trap to handle keyboard interrupt
     signal.signal(signal.SIGINT, signal_handler)
-
+    time.sleep(3)
     while True:
-        # set wheels
-        is_left = period.value > 0
-        # Take note that if I'm to the left on the feed, it's to the rover's right
-        if period.value == 0:
-            continue
-        elif is_left:
-            rover.right()
-        else:
-            rover.left()
-        time.sleep(abs(period.value))
-        rover.motors_low()
+        pan_change = pan_delta.value * -1
+        pan_pulse_width = rover.pi.get_servo_pulsewidth(rover.pan) + pan_change 
+        if in_range(pan_pulse_width, servoRange[0], servoRange[1]):
+            print(pan_change)
+            rover.pi.set_servo_pulsewidth(rover.pan, pan_pulse_width)
+
+        tilt_change = tilt_delta.value * -1
+        tilt_pulse_width = rover.pi.get_servo_pulsewidth(rover.tilt) + tilt_change
+        if in_range(tilt_pulse_width, servoRange[0], servoRange[1]):
+            rover.pi.set_servo_pulsewidth(rover.tilt, tilt_pulse_width)
+        time.sleep(0.06)
 
 def start_manager(rover):
     with Manager() as manager:
@@ -67,13 +73,19 @@ def start_manager(rover):
         objX = manager.Value("i", 0)
         objY = manager.Value("i", 0)
 
-        # set PID values for wheels
-        wheelP = manager.Value("f", 0.00025)
-        wheelI = manager.Value("f", 0)
-        wheelD = manager.Value("f", 0)
+        # set PID values for pan
+        panP = manager.Value("f", 0.1)
+        panI = manager.Value("f", 0.027)
+        panD = manager.Value("f", 0.03)
+
+        # set PID values for tilt
+        tiltP = manager.Value("f", 0)
+        tiltI = manager.Value("f", 0)
+        tiltD = manager.Value("f", 0)
 
         # wheel value managed by independent PIDs
-        wheel = manager.Value("i", 0)
+        pan_delta = manager.Value("f", 0.0)
+        tilt_delta = manager.Value("f", 0.0)
 
         # There are 3 independent processes
         # 1. objectCenter - finds the object center
@@ -88,24 +100,28 @@ def start_manager(rover):
                                                              objY,
                                                              centerX,
                                                              centerY))
-        proc_wheel = Process(target=pid_process, args=(wheel,
-                                                       wheelP,
-                                                       wheelI,
-                                                       wheelD,
+        proc_pan = Process(target=pid_process, args=(pan_delta,
+                                                       panP,
+                                                       panI,
+                                                       panD,
                                                        objX,
                                                        centerX))
-        proc_set_wheel = Process(target=set_wheels, args=(rover,
-                                                          wheel))
-
+        proc_tilt = Process(target=pid_process, args=(tilt_delta,
+                                                       tiltP,
+                                                       tiltI,
+                                                       tiltD,
+                                                       objY,
+                                                       centerY))
+        proc_set_servos = Process(target=set_servos, args=(rover,
+                                                           pan_delta,
+                                                           tilt_delta))
         proc_objectCenter.start()
-        proc_wheel.start()
-        proc_set_wheel.start()
+        proc_pan.start()
+        #proc_tilt.start()
+        proc_set_servos.start()
 
         proc_objectCenter.join()
-        proc_wheel.join()
-        proc_set_wheel.join()
-
-
-
-
+        proc_pan.join()
+        #proc_tilt.join()
+        proc_set_servos.join()
 

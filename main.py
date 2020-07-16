@@ -15,8 +15,13 @@ in3 = 16
 in4 = 18
 en2 = 22
 
+# servos are using pigpio, which uses BCM numbering
+# while the motors are using BOARD numbering
+pan = 12
+tilt = 13
+
 GPIO.setmode(GPIO.BOARD)
-rover = Rover(in1, in2, en1, in3, in4, en2)
+rover = Rover(in1, in2, en1, in3, in4, en2, pan, tilt)
 
 #proc = start_stream("../mjpg-streamer/mjpg-streamer-experimental/")
 start_manager(rover)
