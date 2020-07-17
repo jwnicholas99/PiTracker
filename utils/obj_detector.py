@@ -120,8 +120,11 @@ class ObjDetector:
             # loop over all detection and draw boxes if fulfill:
             #   1. Score is above minimum threshold
             #   2. Class is one of the specified obj_idx
+            cur_highest_score = 0
             for i in range(len(scores)):
-                if ((scores[i] > self.threshold) and (scores[i] <= 1.0) and classes[i] in self.obj_idxs):
+                if ((scores[i] > self.threshold) and (scores[i] <= 1.0) and (scores[i] > cur_highest_score)and classes[i] in self.obj_idxs):
+                    cur_highest_score = scores[i]
+
                     ymin = int(max(1,(boxes[i][0] * self.img_height)))
                     xmin = int(max(1,(boxes[i][1] * self.img_width)))
                     ymax = int(min(self.img_height, (boxes[i][2] * self.img_height)))

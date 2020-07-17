@@ -26,7 +26,7 @@ def obj_center(args, objX, objY, centerX, centerY):
     obj_detector = ObjDetector(model_dir="Sample_TFLite_model",
                                graph="detect.tflite",
                                labelmap="labelmap.txt",
-                               threshold=0.45,
+                               threshold=0.5,
                                resolution="640x640",
                                obj_idxs=[0])
     centerX.value = obj_detector.img_width // 2
