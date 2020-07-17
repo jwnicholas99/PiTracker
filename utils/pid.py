@@ -19,7 +19,7 @@ class PID:
         self.cI = 0
         self.cD = 0
 
-    def update(self, error, sleep=0.5):
+    def update(self, error, sleep=0.25):
         # give some time for action
         time.sleep(sleep)
 

@@ -2,3 +2,4 @@
 *.swo
 *pycache*
 *.pyc
+*.swn

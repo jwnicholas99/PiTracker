@@ -40,6 +40,7 @@ def pid_process(output, p, i, d, objCoord, centerCoord):
     # create and init PID
     p = PID(p.value, i.value, d.value)
     p.initialize()
+    time.sleep(2)
 
     while True:
         error = centerCoord.value - objCoord.value
@@ -51,19 +52,18 @@ def in_range(val, start, end):
 def set_servos(rover, pan_delta, tilt_delta):
     # signal trap to handle keyboard interrupt
     signal.signal(signal.SIGINT, signal_handler)
-    time.sleep(3)
     while True:
         pan_change = pan_delta.value * -1
         pan_pulse_width = rover.pi.get_servo_pulsewidth(rover.pan) + pan_change 
         if in_range(pan_pulse_width, servoRange[0], servoRange[1]):
-            print(pan_change)
             rover.pi.set_servo_pulsewidth(rover.pan, pan_pulse_width)
 
         tilt_change = tilt_delta.value * -1
         tilt_pulse_width = rover.pi.get_servo_pulsewidth(rover.tilt) + tilt_change
         if in_range(tilt_pulse_width, servoRange[0], servoRange[1]):
+            print(tilt_change)
             rover.pi.set_servo_pulsewidth(rover.tilt, tilt_pulse_width)
-        time.sleep(0.06)
+        time.sleep(0.005)
 
 def start_manager(rover):
     with Manager() as manager:
@@ -74,14 +74,14 @@ def start_manager(rover):
         objY = manager.Value("i", 0)
 
         # set PID values for pan
-        panP = manager.Value("f", 0.1)
-        panI = manager.Value("f", 0.027)
-        panD = manager.Value("f", 0.03)
+        panP = manager.Value("f", 0.01)
+        panI = manager.Value("f", 0.0035)
+        panD = manager.Value("f", 0.003)
 
         # set PID values for tilt
-        tiltP = manager.Value("f", 0)
-        tiltI = manager.Value("f", 0)
-        tiltD = manager.Value("f", 0)
+        tiltP = manager.Value("f", 0.01)
+        tiltI = manager.Value("f", 0.001)
+        tiltD = manager.Value("f", 0.0009)
 
         # wheel value managed by independent PIDs
         pan_delta = manager.Value("f", 0.0)
@@ -117,11 +117,11 @@ def start_manager(rover):
                                                            tilt_delta))
         proc_objectCenter.start()
         proc_pan.start()
-        #proc_tilt.start()
+        proc_tilt.start()
         proc_set_servos.start()
 
         proc_objectCenter.join()
         proc_pan.join()
-        #proc_tilt.join()
+        proc_tilt.join()
         proc_set_servos.join()
 
