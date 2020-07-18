@@ -16,7 +16,7 @@ Credits to:
 * [Adrian Rosebrock's guide on pan-tilt face tracking](https://www.pyimagesearch.com/2019/04/01/pan-tilt-face-tracking-with-a-raspberry-pi-and-opencv/) - his code formed the base for using PID processes for controlling the pan-tilt camera
 
 ## Table of Contents
-- [Required Hardware](#required-20hardware)
+- [Required Hardware](#required-hardware)
 - [Build Instructions](#build-instructions)
 - [How to Setup and Run](#how-to-setup-and-run)
 
