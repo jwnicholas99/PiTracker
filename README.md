@@ -1,3 +1,7 @@
+<p align="center">
+<img src="media/demo.gif" width="450" height="450"/>
+</p>
+
 # Raspberry Pi Rover (rpi-rover)
 This Github repository contains the code used to:
 1. Drive a rover using a Raspberry Pi
@@ -6,9 +10,15 @@ This Github repository contains the code used to:
 
 This project came into being simply because my dog is obsessed with biting her feet. As she's smart enough to hide while committing this heinuous crime, I wanted to build a rover that could track her.
 
+
 Credits to:
 * [EdjeElectronic's repo on using Tensorflow Lite for object detection](https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi) - I modified his `TFLite_detection_webcam.py` to fit into the rpi-rover code
 * [Adrian Rosebrock's guide on pan-tilt face tracking](https://www.pyimagesearch.com/2019/04/01/pan-tilt-face-tracking-with-a-raspberry-pi-and-opencv/) - his code formed the base for using PID processes for controlling the pan-tilt camera
+
+## Table of Contents
+- [Required Hardware](#required%20hardware)
+- [Build Instructions](#build%20instructions)
+- [How to Setup and Run](#how%20to%20setup%20and%20run)
 
 ## Required Hardware
 * Raspberry Pi 4B (at least 2GB recommended)
@@ -20,14 +30,50 @@ Credits to:
 * [5MP Camera for Raspberry Pi](https://sg.cytron.io/p-5mp-camera-board-for-raspberry-pi?search=camera&description=1&src=search.list)
 * [FFC Cable longer than 20cm](https://sg.cytron.io/p-raspberry-pi-15-pin-camera-ffc-cable-50cm?search=FFC%20cable&description=1&src=search.list) (as you will need to move your camera around)
 * [SG90 Micro Servo](https://sg.cytron.io/p-sg90-micro-servo?search=servo&description=1&src=search.list) X 2 (to pan/tilt camera)
+* Mini breadboard
+* Jumper wires
 
-## How to setup and run
+## Build Instructions
+<p align="center">
+<img src="media/schematic.png"/>
+</p>
+
+The above schematic is how to connect all our components together. It might seem a little complicated, but don't worry, it's actually not that complex! There are two parts to the diagram: the motors (the batteries, L298N motor driver and the two DC motors) and the servos (the breadboard and two servos)
+
+### 1. The motors
+<p align="center">
+<img src="media/motors.png" width="450"/>
+</p>
+
+1. Connect the two DC motors to the L298N motor driver 
+2. Connect GPIO BOARD pin 13 to the L298N in1 pin (Brown) ![#B63802](https://via.placeholder.com/15/B63802/000000?text=+)
+3. Connect GPIO BOARD pin 11 to the L298N in2 pin (Orange) ![#F6C02C](https://via.placeholder.com/15/F6C02C/000000?text=+)
+4. Connect GPIO BOARD pin 15 to the L298N en1 pin (Green) ![#2FF32](https://via.placeholder.com/15/12FF32/000000?text=+)
+5. Connect GPIO BOARD pin 16 to the L298N in3 pin (Blue) ![#1261FF](https://via.placeholder.com/15/1261FF/000000?text=+)
+6. Connect GPIO BOARD pin 18 to the L298N in4 pin (Purple) ![#9012FF](https://via.placeholder.com/15/9012FF/000000?text=+)
+7. Connect GPIO BOARD pin 22 to the L298N en2 pin (White) ![#FFFFFF](https://via.placeholder.com/15/FFFFFF/000000?text=+)
+8. Connect the batteries to the L298N
+9. Connect the L298N to a GPIO GND pin
+
+### 2. The servos
+The servos are much simpler, so just follow that part of the schematic diagram
+
+### 3. Pan-tilt camera
+To build the pan-tilt camera, you just need two servos - one for panning and the other for tilting. You can either buy a Pimoroni one, or just tape together two servos like I did below.
+
+<p align="center">
+<img src="media/camera-front.jpg" width="300"/>
+<img src="media/camera-side.jpg" width="300"/>
+</p>
+
+## How to Setup and Run
 
 Summary of steps:
 1. Enable camera on the Raspberry Pi
 2. Clone Github repository
 3. Create a new virtual environment and install necessary packages
-4. Run `python main.py`
+4. Update main.py to use your own GPIO pins
+5. Run `python main.py`
 
 ### 1. Enable camera on the Raspberry Pi
 In the terminal of your rpi, issue:
@@ -74,9 +120,32 @@ Fourth, install other python packages:
 $ pip3 install -r requirements.txt
 ```
 
-### 4. Run main.py
+### 4. Update main.py to use your own GPIO pins
+It's likely that you will use different GPIO pins, so open up main.py and update the following lines:
+```
+# right motor
+in1 = 13
+in2 = 11
+en1 = 15
+
+# left motor
+in3 = 16
+in4 = 18
+en2 = 22
+
+# servos are using pigpio, which uses BCM numbering
+# while the motors are using BOARD numbering
+pan = 12
+tilt = 13
+```
+Take note that I am using two different modules for controlling GPIO pins: RPi.GPIO (for interfacing with the motor driver and the wheels) and pigpio (for controlling the servos). This is because pigpio is much more accurate than RPi.GPIO in maintaining pulse width modulation, hence preventing the servos from twitching too much. 
+
+Note that for the RPi.GPIO, I'm using BOARD numbering, while pigpio only allows me to use BCM numbering.
+
+
+### 5. Run main.py
 You can start the main program using:
 ```
 $ python3 main.py
 ``` 
-This should produce a view from your rpi camera with bounding boxes of objects.
+This should produce a view from your rpi camera with bounding boxes of objects. Use "WASD" in the terminal to control the rover and the picamera should track any object you specify. Press "E" to exit.
