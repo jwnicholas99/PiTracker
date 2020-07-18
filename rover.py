@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import pigpio
 from time import sleep
+import sys
 
 class Rover():
     def __init__(self, in1, in2, en1, in3, in4, en2, pan, tilt):
@@ -24,9 +25,9 @@ class Rover():
         self.motors_low()
 
         self.motor_right = GPIO.PWM(en1, 1000)
-        self.motor_right.start(45)
+        self.motor_right.start(80)
         self.motor_left = GPIO.PWM(en2, 1000)
-        self.motor_left.start(45)
+        self.motor_left.start(80)
 
         self.pi = pigpio.pi()
         self.pi.set_servo_pulsewidth(pan, 1500)
@@ -40,10 +41,13 @@ class Rover():
         GPIO.output(self.in4, GPIO.LOW)
 
     def cleanup(self):
-        self.servo_pan.stop()
-        self.servo_tilt.stop()
+        self.pi.set_servo_pulsewidth(self.pan, 1500)
+        self.pi.set_servo_pulsewidth(self.tilt, 1500)
+        sleep(0.3)
+        self.pi.set_servo_pulsewidth(self.pan, 0)
+        self.pi.set_servo_pulsewidth(self.tilt, 0)
+        self.pi.stop()
         GPIO.cleanup()
-        exit()
 
     def forward(self):
         GPIO.output(self.in1, GPIO.LOW)

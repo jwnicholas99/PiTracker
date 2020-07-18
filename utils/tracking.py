@@ -61,7 +61,6 @@ def set_servos(rover, pan_delta, tilt_delta):
         tilt_change = tilt_delta.value * -1
         tilt_pulse_width = rover.pi.get_servo_pulsewidth(rover.tilt) + tilt_change
         if in_range(tilt_pulse_width, servoRange[0], servoRange[1]):
-            print(tilt_change)
             rover.pi.set_servo_pulsewidth(rover.tilt, tilt_pulse_width)
         time.sleep(0.005)
 

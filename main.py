@@ -1,9 +1,13 @@
+import os
+import sys
 import RPi.GPIO as GPIO
 from time import sleep
 from rover import Rover
 from utils.keyboard import getch
 from utils.stream import start_stream, end_stream
 from utils.tracking import start_manager
+from multiprocessing import Process
+import psutil
 
 # right motor
 in1 = 13
@@ -23,8 +27,16 @@ tilt = 13
 GPIO.setmode(GPIO.BOARD)
 rover = Rover(in1, in2, en1, in3, in4, en2, pan, tilt)
 
+def kill_procs(pid):
+    parent = psutil.Process(pid)
+    for child in parent.children(recursive=True):
+        child.kill()
+
 #proc = start_stream("../mjpg-streamer/mjpg-streamer-experimental/")
-start_manager(rover)
+pid = os.getpid()
+proc_tracking = Process(target=start_manager, args=(rover,))
+proc_tracking.start()
+
 while True:
     key = getch()
     if key == "w":
@@ -37,7 +49,9 @@ while True:
         rover.right()
     if key == "e":
         rover.cleanup()
-        end_stream(proc)
+        kill_procs(pid)
+        sys.exit()
+        #end_stream(proc)
 
     sleep(0.1)
     rover.motors_low()
