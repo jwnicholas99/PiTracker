@@ -19,11 +19,11 @@ def signal_handler(sig, frame):
 
     sys.exit()
 
-def obj_center(args, objX, objY, centerX, centerY):
+def obj_center(objX, objY, centerX, centerY):
     # signal trap to handle keyboard interrupt
     signal.signal(signal.SIGINT, signal_handler)
 
-    obj_detector = ObjDetector(model_dir="Sample_TFLite_model",
+    obj_detector = ObjDetector(model_dir="models/mobilenet_SSD",
                                graph="detect.tflite",
                                labelmap="labelmap.txt",
                                threshold=0.5,
@@ -91,11 +91,7 @@ def start_manager(rover):
         # 2. wheel        - PID control loops for turning wheel
         # 3. set_wheels   - turns wheels according to PID control loops
 
-        args = {
-            "cascade": "haarcascade_frontalface_default.xml"
-        }
-        proc_objectCenter = Process(target=obj_center, args=(args,
-                                                             objX,
+        proc_objectCenter = Process(target=obj_center, args=(objX,
                                                              objY,
                                                              centerX,
                                                              centerY))
