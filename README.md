@@ -1,26 +1,48 @@
+<h1 align="center">
+  <br>
+  🔭 PiTracker
+  <br>
+</h1>
+
+<h4 align="center">An object-tracking rover.</h4>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-green.svg"
+         alt="License">
+  </a>
+  <a href="https://github.com/jwnicholas99/rpi-rgb-led/releases/">
+    <img src="https://img.shields.io/github/v/release/jwnicholas99/rpi-rgb-led"
+         alt="License">
+  </a>
+  <img src="https://img.shields.io/badge/contributions-welcome-orange.svg?style=flat"
+         alt="License">
+  
+</p>
+
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#setup">Setup</a> •
+  <a href="#credits">Credits</a> •
+  <a href="#license">License</a>
+</p>
+
+
 <p align="center">
 <img src="media/demo.gif" width="450" height="450"/>
 </p>
 
-# Raspberry Pi Rover (rpi-rover)
-This Github repository contains the code used to:
-1. Drive a rover using a Raspberry Pi
-2. Detect objects using Tensorflow Lite (tflite)
-3. Track a specified object class (eg. person or bird) using a pan-tilt camera with Proportional Integral Derivative (PID) process control
 
 This project came into being simply because my dog is obsessed with biting her feet. As she's smart enough to hide while committing this heinuous crime, I wanted to build a rover that could track her.
 
+## Key Features
 
-Credits to:
-* [EdjeElectronic's repo on using Tensorflow Lite for object detection](https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi) - I modified his `TFLite_detection_webcam.py` to fit into the rpi-rover code
-* [Adrian Rosebrock's guide on pan-tilt face tracking](https://www.pyimagesearch.com/2019/04/01/pan-tilt-face-tracking-with-a-raspberry-pi-and-opencv/) - his code formed the base for using PID processes for controlling the pan-tilt camera
+* Control and drive the rover
+* Detect objects using TensorFlow Lite (tflite)
+* Track a specified object class (eg. person or bird) using a pan-tilt camera with Proportional Integral Derivative (PID) process control
 
-## Table of Contents
-- [Required Hardware](#required-hardware)
-- [Build Instructions](#build-instructions)
-- [How to Setup and Run](#how-to-setup-and-run)
-
-## Required Hardware
+## Setup
 * Raspberry Pi 4B (at least 2GB recommended)
 * [Robot Car Chassis](https://sg.cytron.io/p-2wd-smart-robot-car-chassis?src=us.special.c)
   * TT Motor + Wheel  X 2
@@ -149,3 +171,9 @@ You can start the main program using:
 $ python3 main.py
 ``` 
 This should produce a view from your rpi camera with bounding boxes of objects. Use "WASD" in the terminal to control the rover and the picamera should track any object you specify. Press "E" to exit.
+
+
+
+Credits to:
+* [EdjeElectronic's repo on using Tensorflow Lite for object detection](https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi) - I modified his `TFLite_detection_webcam.py` to fit into the rpi-rover code
+* [Adrian Rosebrock's guide on pan-tilt face tracking](https://www.pyimagesearch.com/2019/04/01/pan-tilt-face-tracking-with-a-raspberry-pi-and-opencv/) - his code formed the base for using PID processes for controlling the pan-tilt camera
