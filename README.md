@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h4 align="center">An object-tracking rover.</h4>
+<h4 align="center">A deep object-tracking rover.</h4>
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT">
@@ -33,8 +33,7 @@
 <img src="media/demo.gif" width="450" height="450"/>
 </p>
 
-
-This project came into being simply because my dog is obsessed with biting her feet. As she's smart enough to hide while committing this heinuous crime, I wanted to build a rover that could track her.
+PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</b> - Single Shot Detection - in order to deliver <b>decent 3-4 FPS</b> despite the RPi's weak CPU and GPU.
 
 ## Key Features
 
