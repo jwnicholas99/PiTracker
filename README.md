@@ -28,10 +28,7 @@
   <a href="#license">License</a>
 </p>
 
-
-<p align="center">
-<img src="media/demo.gif" width="450" height="450"/>
-</p>
+![screenshot](https://raw.githubusercontent.com/jwnicholas99/PiTracker/master/media/demo.gif)
 
 PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</b> - Single Shot Detection - in order to deliver <b>tracking</b> at decent <b>3-4 FPS</b> despite the RPi's weak CPU and GPU.
 
@@ -42,11 +39,11 @@ PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</
 * Track a specified object class (eg. person or bird) using a pan-tilt camera with Proportional Integral Derivative (PID) process control
 
 ## Usage
-You can start the main program using:
+
 ```
-$ python3 main.py
+usage: main.py
 ``` 
-This should produce a view from your rpi camera with bounding boxes of objects. Use "WASD" in the terminal to control the rover and the picamera should track any object you specify. Press "E" to exit.
+This produces a view from your RPi camera with bounding boxes of objects. Use "WASD" in the terminal to control the rover and the picamera should track any object you specify. Press "E" to exit.
 
 ## Setup
 There are two parts to the set-up: building the rover and setting up your Raspberry Pi.
@@ -167,7 +164,6 @@ tilt = 13
 Note that I am using two different modules for controlling GPIO pins: RPi.GPIO (for interfacing with the motor driver and the wheels) and pigpio (for controlling the servos). This is because pigpio is much more accurate than RPi.GPIO in maintaining pulse width modulation, hence preventing the servos from twitching too much. 
 
 Note that for the RPi.GPIO, I'm using BOARD numbering, while pigpio only allows me to use BCM numbering.
-
 
 
 
