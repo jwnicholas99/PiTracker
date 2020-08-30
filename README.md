@@ -28,7 +28,10 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://raw.githubusercontent.com/jwnicholas99/PiTracker/master/media/demo.gif)
+<p align="center">
+<img src="media/demo.gif" width="600" height="600"/>
+</p>
+
 
 PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</b> - Single Shot Detection - in order to deliver <b>tracking</b> at decent <b>3-4 FPS</b> despite the RPi's weak CPU and GPU.
 
