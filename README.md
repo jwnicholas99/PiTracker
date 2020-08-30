@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h4 align="center">A deep object-tracking rover.</h4>
+<h4 align="center">A deep tracking rover.</h4>
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT">
@@ -33,15 +33,27 @@
 <img src="media/demo.gif" width="450" height="450"/>
 </p>
 
-PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</b> - Single Shot Detection - in order to deliver <b>decent 3-4 FPS</b> despite the RPi's weak CPU and GPU.
+PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</b> - Single Shot Detection - in order to deliver <b>tracking</b> at decent <b>3-4 FPS</b> despite the RPi's weak CPU and GPU.
 
 ## Key Features
 
-* Control and drive the rover
+* Control the rover using your keyboard
 * Detect objects using TensorFlow Lite (tflite)
 * Track a specified object class (eg. person or bird) using a pan-tilt camera with Proportional Integral Derivative (PID) process control
 
+## Usage
+You can start the main program using:
+```
+$ python3 main.py
+``` 
+This should produce a view from your rpi camera with bounding boxes of objects. Use "WASD" in the terminal to control the rover and the picamera should track any object you specify. Press "E" to exit.
+
 ## Setup
+There are two parts to the set-up: building the rover and setting up your Raspberry Pi.
+
+### Build Instructions
+
+You need the following hardware:
 * Raspberry Pi 4B (at least 2GB recommended)
 * [Robot Car Chassis](https://sg.cytron.io/p-2wd-smart-robot-car-chassis?src=us.special.c)
   * TT Motor + Wheel  X 2
@@ -54,14 +66,14 @@ PiTracker leverages <b>TensorFlow Lite</b> and a <b>lightweight neural network</
 * Mini breadboard
 * Jumper wires
 
-## Build Instructions
+
 <p align="center">
 <img src="media/schematic.png"/>
 </p>
 
 The above schematic is how to connect all our components together. It might seem a little complicated, but don't worry, it's actually not that complex! There are two parts to the diagram: the motors (the batteries, L298N motor driver and the two DC motors) and the servos (the breadboard and two servos)
 
-### 1. The motors
+#### 1. The motors
 <p align="center">
 <img src="media/motors.png" width="450"/>
 </p>
@@ -76,10 +88,10 @@ The above schematic is how to connect all our components together. It might seem
 8. Connect the batteries to the L298N
 9. Connect the L298N to a GPIO GND pin
 
-### 2. The servos
+#### 2. The servos
 The servos are much simpler, so just follow that part of the schematic diagram
 
-### 3. Pan-tilt camera
+#### 3. Pan-tilt camera
 To build the pan-tilt camera, you just need two servos - one for panning and the other for tilting. You can either buy a Pimoroni one, or just tape together two servos like I did below.
 
 <p align="center">
@@ -87,29 +99,22 @@ To build the pan-tilt camera, you just need two servos - one for panning and the
 <img src="media/camera-side.jpg" width="300"/>
 </p>
 
-## How to Setup and Run
+### Setting up RPi
 
-Summary of steps:
-1. Enable camera on the Raspberry Pi
-2. Clone Github repository
-3. Create a new virtual environment and install necessary packages
-4. Update main.py to use your own GPIO pins
-5. Run `python main.py`
-
-### 1. Enable camera on the Raspberry Pi
+#### 1. Enable camera on the Raspberry Pi
 In the terminal of your rpi, issue:
 ```
 $ sudo raspi-config
 ```
 Go -> Interfacing Options -> P1 Camera -> Yes 
 
-### 2. Clone this Github repository
+#### 2. Clone this Github repository
 ```
 $ git clone https://github.com/jwnicholas99/rpi_rover.git
 $ cd rpi_rover/
 ```
 
-### 3. Create a new venv and install packages
+#### 3. Create a new venv and install packages
 
 First, create and activate a new virtual environment by issuing:
 ```
@@ -141,7 +146,7 @@ Fourth, install other python packages:
 $ pip3 install -r requirements.txt
 ```
 
-### 4. Update main.py to use your own GPIO pins
+#### 4. Update main.py to use your own GPIO pins
 It's likely that you will use different GPIO pins, so open up main.py and update the following lines:
 ```
 # right motor
@@ -159,20 +164,19 @@ en2 = 22
 pan = 12
 tilt = 13
 ```
-Take note that I am using two different modules for controlling GPIO pins: RPi.GPIO (for interfacing with the motor driver and the wheels) and pigpio (for controlling the servos). This is because pigpio is much more accurate than RPi.GPIO in maintaining pulse width modulation, hence preventing the servos from twitching too much. 
+Note that I am using two different modules for controlling GPIO pins: RPi.GPIO (for interfacing with the motor driver and the wheels) and pigpio (for controlling the servos). This is because pigpio is much more accurate than RPi.GPIO in maintaining pulse width modulation, hence preventing the servos from twitching too much. 
 
 Note that for the RPi.GPIO, I'm using BOARD numbering, while pigpio only allows me to use BCM numbering.
 
 
-### 5. Run main.py
-You can start the main program using:
-```
-$ python3 main.py
-``` 
-This should produce a view from your rpi camera with bounding boxes of objects. Use "WASD" in the terminal to control the rover and the picamera should track any object you specify. Press "E" to exit.
 
 
+## Credits
 
-Credits to:
-* [EdjeElectronic's repo on using Tensorflow Lite for object detection](https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi) - I modified his `TFLite_detection_webcam.py` to fit into the rpi-rover code
+* Python - Everything is written in Python
+* [EdjeElectronic's repo on using Tensorflow Lite for object detection](https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi) - I modified his `TFLite_detection_webcam.py` to fit into the PiTracker code
 * [Adrian Rosebrock's guide on pan-tilt face tracking](https://www.pyimagesearch.com/2019/04/01/pan-tilt-face-tracking-with-a-raspberry-pi-and-opencv/) - his code formed the base for using PID processes for controlling the pan-tilt camera
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
