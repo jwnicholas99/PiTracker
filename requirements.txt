@@ -15,7 +15,7 @@ importlib-metadata==1.7.0
 imutils==0.5.3
 Keras-Preprocessing==1.1.2
 Markdown==3.2.2
-numpy==1.19.0
+numpy==1.22.0
 oauthlib==3.1.0
 opencv-contrib-python==3.4.3.18
 opencv-python==3.4.6.27
